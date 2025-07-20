@@ -8,21 +8,17 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
-
-    private String email;
-
-    private String password;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    @OneToOne(mappedBy = "user")
+    @ManyToOne
     private Cart cart;
+
+    @ManyToOne
+    private Product product;
+
+    private Integer quantity;
 }
