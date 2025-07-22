@@ -3,8 +3,10 @@ package com.shop.ecommerce.controller;
 import com.shop.ecommerce.dto.CategoryRequest;
 import com.shop.ecommerce.dto.CategoryResponse;
 import com.shop.ecommerce.service.CategoryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
@@ -33,8 +35,14 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id){
-        categoryService.deleteCategory(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id){
+        try {
+            categoryService.deleteCategory(id);
+            return ResponseEntity.ok().build();
+        }catch (Exception e){
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("You can't delete this category");
+        }
     }
 }
