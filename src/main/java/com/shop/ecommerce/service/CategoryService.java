@@ -20,7 +20,6 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    @PostMapping
     public CategoryResponse createCategory(CategoryRequest request){
         Category category = Category.builder().
                 name(request.getName())
@@ -29,7 +28,6 @@ public class CategoryService {
         return mapToResponse(categoryRepository.save(category));
     }
 
-    @GetMapping
     public List<CategoryResponse> getAllCategories(){
         return categoryRepository.findAll()
                 .stream()
@@ -37,14 +35,12 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}")
     public CategoryResponse getAllCategories(Long id){
         Category category = categoryRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("category is not found"));
         return mapToResponse(category);
     }
 
-    @DeleteMapping("/{id}")
     public void deleteCategory(Long id){
         categoryRepository.deleteById(id);
     }
