@@ -35,7 +35,7 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    public CategoryResponse getAllCategories(Long id){
+    public CategoryResponse getCategoryById(Long id){
         Category category = categoryRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("category is not found"));
         return mapToResponse(category);
