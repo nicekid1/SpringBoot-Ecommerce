@@ -1,6 +1,6 @@
 package com.shop.ecommerce.security;
 
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
 
 public class JwtUtil {
     @Value("${jwt.secret}")
