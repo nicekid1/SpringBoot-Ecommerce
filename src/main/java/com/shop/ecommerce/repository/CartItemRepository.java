@@ -1,7 +1,7 @@
 package com.shop.ecommerce.repository;
 
-import com.shop.ecommerce.model.Cart;
+import com.shop.ecommerce.model.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CartItemRepository extends JpaRepository<Cart,Long> {
+public interface CartItemRepository extends JpaRepository<CartItem,Long> {
 }
