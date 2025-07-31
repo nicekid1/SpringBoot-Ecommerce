@@ -23,7 +23,7 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private  final ProductRepository productRepository;
     private final UserRepository userRepository;
-    public void add(AddToCartRequest request, String email){
+    public void addToCart(AddToCartRequest request, String email){
         User user = userRepository.findByEmail(email).orElseThrow();
         Product product = productRepository.findById(request.getProductId()).orElseThrow();
 
