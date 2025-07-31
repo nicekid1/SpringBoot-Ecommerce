@@ -1,4 +1,7 @@
 package com.shop.ecommerce.repository;
 
-public interface OrderItemRepository {
+import com.shop.ecommerce.model.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderItemRepository extends JpaRepository<Order,Long> {
 }
