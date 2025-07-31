@@ -53,4 +53,10 @@ public class CartService {
                 item.getProduct().getPrice()))
                 .collect(Collectors.toList());
     }
+
+    public void clearCart(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+        Cart cart = cartRepository.findByUser(user).orElseThrow();
+        cartItemRepository.deleteAll(cart.getItems());
+    }
 }
