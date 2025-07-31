@@ -1,6 +1,7 @@
 package com.shop.ecommerce.service;
 
 import com.shop.ecommerce.dto.AddToCartRequest;
+import com.shop.ecommerce.dto.CartItemResponse;
 import com.shop.ecommerce.model.Cart;
 import com.shop.ecommerce.model.CartItem;
 import com.shop.ecommerce.model.Product;
@@ -11,6 +12,9 @@ import com.shop.ecommerce.repository.ProductRepository;
 import com.shop.ecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,5 +40,17 @@ public class CartService {
                 .build();
 
         cartItemRepository.save(item);
+    }
+
+    public List<CartItemResponse> getCartItems(String email){
+        User user = userRepository.findByEmail(email).orElseThrow();
+        Cart cart = cartRepository.findByUser(user).orElseThrow();
+
+        return cart.getItems().stream()
+                .map(item -> new CartItemResponse(
+                item.getProduct().getName(),
+                item.getQuantity(),
+                item.getProduct().getPrice()))
+                .collect(Collectors.toList());
     }
 }
