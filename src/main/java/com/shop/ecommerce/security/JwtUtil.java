@@ -36,8 +36,18 @@ public class JwtUtil {
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
-        return extractUsername(token).equals(userDetails.getUsername());
+        try {
+            String username = extractUsername(token);
+            Date expiration = getClaims(token).getExpiration();
+
+            return username.equals(userDetails.getUsername()) &&
+                    !expiration.before(new Date());
+        } catch (Exception e) {
+            System.out.println("Token validation failed: " + e.getMessage());
+            return false;
+        }
     }
+
 
     private Claims getClaims(String token) {
         return Jwts.parserBuilder()

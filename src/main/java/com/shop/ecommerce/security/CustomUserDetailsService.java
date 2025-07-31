@@ -20,10 +20,19 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private UserDetails mapToUserDetails(User user) {
+        String roleName = user.getRole().name();
+
+        if (roleName.startsWith("ROLE_")) {
+            roleName = roleName.substring(5);
+        }
+
+        System.out.println("User: " + user.getEmail() + " - Role: " + roleName);
+
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .roles(user.getRole().name())
+                .roles(roleName)
                 .build();
     }
+
 }
