@@ -24,7 +24,7 @@ public class PaymentService {
 
     public String initiatePayment(Long orderId , String callbackUrl){
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(()-> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new RuntimeException("Order not found"));
 
         Map<String, Object> body = new HashMap<>();
         body.put("merchant_id", MERCHANT_ID);
@@ -36,15 +36,14 @@ public class PaymentService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-
         String url = "https://sandbox.zarinpal.com/pg/v4/payment/request.json";
 
         ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
 
         Map<String, Object> data = (Map<String, Object>) response.getBody().get("data");
-        Boolean success = (Boolean) response.getBody().get("errors") == null;
+        Object code = data.get("code");
 
-        if (success && data != null) {
+        if (code != null && code.equals(100)) {
             String authority = (String) data.get("authority");
             return "https://sandbox.zarinpal.com/pg/StartPay/" + authority;
         }
@@ -52,4 +51,38 @@ public class PaymentService {
         throw new RuntimeException("Payment failed: " + response.getBody());
     }
 
+    public String verifyPayment(String authority, String status, Long orderId){
+        if (!"OK".equals(status)) {
+            return "پرداخت ناموفق یا لغو شده توسط کاربر.";
+        }
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("merchant_id", MERCHANT_ID);
+        body.put("amount", order.getTotalPrice().intValue());
+        body.put("authority", authority);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+        String url = "https://sandbox.zarinpal.com/pg/v4/payment/verify.json";
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
+
+        Map<String, Object> data = (Map<String, Object>) response.getBody().get("data");
+
+        if (data != null && data.get("code").equals(100)) {
+
+            order.setTotalPrice(order.getTotalPrice()); // یا چیزی مشابه
+            orderRepository.save(order);
+
+            return "Payment was successful.: " + data.get("ref_id");
+        }
+
+        return "Payment verification failed.";
     }
+}

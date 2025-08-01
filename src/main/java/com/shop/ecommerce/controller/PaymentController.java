@@ -1,14 +1,10 @@
 package com.shop.ecommerce.controller;
 
-
 import com.shop.ecommerce.dto.PaymentRequest;
 import com.shop.ecommerce.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -18,7 +14,7 @@ import java.util.Map;
 public class PaymentController {
     private final PaymentService paymentService;
 
-    @PostMapping("/requset")
+    @PostMapping("/request")
     public ResponseEntity<Map<String, String>> createPayment(@RequestBody PaymentRequest paymentRequest) {
         String paymentUrl = paymentService.initiatePayment(
                 paymentRequest.getOrderId(),
@@ -26,4 +22,15 @@ public class PaymentController {
         );
         return ResponseEntity.ok(Map.of("payment_url", paymentUrl));
     }
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verify(
+            @RequestParam("Authority") String authority,
+            @RequestParam("Status") String status,
+            @RequestParam("order_id") Long orderId
+    ) {
+        String result = paymentService.verifyPayment(authority, status, orderId);
+        return ResponseEntity.ok(result);
+    }
+
 }
